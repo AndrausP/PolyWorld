@@ -274,6 +274,8 @@ func _debug_screenshot() -> void:
 					_player.teleport_to(Vector3(spot.x, _fauna.ground_height(spot) + 0.5, spot.z))
 					_player.rotation.y = atan2(-(a.position.x - spot.x), -(a.position.z - spot.z))
 					break
+		elif arg == "--lineup":
+			_debug_lineup()
 		elif arg == "--coast":
 			var sea := _island.config.sea_level
 			var dir := Vector2.from_angle(float(_island.seed_value % 628) / 100.0)
@@ -298,6 +300,40 @@ func _debug_screenshot() -> void:
 		await get_tree().process_frame
 	get_viewport().get_texture().get_image().save_png(path)
 	get_tree().quit()
+
+
+## Depuração: --lineup põe as 10 espécies em fila sobre uma plataforma alta.
+func _debug_lineup() -> void:
+	var base := Vector3(0, 400, 0)
+	var floor_body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(40, 1, 40)
+	cs.shape = box
+	floor_body.add_child(cs)
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = box.size
+	mi.mesh = bm
+	var fm := StandardMaterial3D.new()
+	fm.albedo_color = Color("7fae5c")
+	mi.material_override = fm
+	floor_body.add_child(mi)
+	floor_body.position = base + Vector3(0, -0.5, 0)
+	add_child(floor_body)
+	var species := SpeciesLibrary.all()
+	for i in species.size():
+		var sp := species[i]
+		var g := PackedFloat32Array()
+		g.resize(Genes.G.COUNT)
+		g.fill(1.0)
+		var model := AnimalModel.build(sp, g)
+		model.scale = Vector3.ONE * sp.base_size
+		model.position = base + Vector3((i % 5 - 2) * 2.0, 0, (i / 5) * -2.4)
+		model.rotation.y = 0.5
+		add_child(model)
+	_player.teleport_to(base + Vector3(0, 1.0, 5.5))
+	_player.rotation.y = 0.0
 
 
 ## Teste de integração (--selftest): coleta, fruta, caça e inventário no servidor local.
