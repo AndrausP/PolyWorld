@@ -13,4 +13,5 @@ tier = 3
 category = &"tool"
 food_value = 0
 tool_type = &"axe"
+damage = 12.0
 durability = 360

@@ -8,6 +8,11 @@ const XP_STEP := 100
 var _states: Dictionary = {}
 
 
+func _ready() -> void:
+	if multiplayer.peer_connected.is_connected(_on_peer_connected) == false:
+		multiplayer.peer_connected.connect(_on_peer_connected)
+
+
 func add_xp(peer: int, amount: int) -> void:
 	if not _is_server() or amount <= 0:
 		return
@@ -91,13 +96,23 @@ func _state_for(peer: int) -> Dictionary:
 
 
 func _sync(peer: int) -> void:
-	if _is_server() and multiplayer.has_multiplayer_peer() and multiplayer.get_peers().size() > 0:
+	if _is_server() and multiplayer.has_multiplayer_peer() and multiplayer.get_peers().has(peer):
 		var state: Dictionary = _state_for(peer)
-		_rpc_sync.rpc(peer, int(state["xp"]), int(state["level"]), int(state["points"]), state["unlocked"])
+		_rpc_sync.rpc_id(peer, peer, int(state["xp"]), int(state["level"]), int(state["points"]), state["unlocked"])
+
+
+func _on_peer_connected(new_peer: int) -> void:
+	if not _is_server():
+		return
+	var state: Dictionary = _state_for(new_peer)
+	if multiplayer.get_peers().has(new_peer):
+		_rpc_sync.rpc_id(new_peer, new_peer, int(state["xp"]), int(state["level"]), int(state["points"]), state["unlocked"])
 
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_sync(peer: int, xp: int, level_value: int, points_value: int, unlocked: Array) -> void:
+	if not _is_server() and peer != multiplayer.get_unique_id():
+		return
 	_states[peer] = {"xp": xp, "level": level_value, "points": points_value, "unlocked": unlocked.duplicate()}
 	changed.emit(peer)
 

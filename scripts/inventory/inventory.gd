@@ -7,6 +7,7 @@ signal hotbar_selected(index: int)
 
 const SLOT_COUNT := 36
 const HOTBAR_COUNT := 9
+const HAND_DAMAGE := 4.0
 const ItemDatabaseScript = preload("res://scripts/items/item_database.gd")
 const InventoryUIScript = preload("res://scenes/ui_inv/inventory_ui.gd")
 
@@ -59,6 +60,57 @@ func slot_snapshot(peer: int) -> Array:
 
 func item_data(item_id: StringName) -> ItemData:
 	return _item_data.get(item_id) as ItemData
+
+
+func selected_item(peer: int) -> StringName:
+	if not _states.has(peer):
+		return &""
+	var state: Dictionary = _states[peer]
+	var selected_slot := int(state.get("selected_slot", 0))
+	if selected_slot < 0 or selected_slot >= HOTBAR_COUNT:
+		return &""
+	var hotbar: Array = state["hotbar"]
+	var item_id := StringName(str(hotbar[selected_slot]))
+	if item_id == &"" or _count_in_slots(state["slots"], item_id) <= 0:
+		return &""
+	return item_id
+
+
+func weapon_damage(peer: int) -> float:
+	var data := _item_data.get(selected_item(peer)) as ItemDefinition
+	if data == null or data.tool_type not in [&"axe", &"pickaxe", &"spear"]:
+		return HAND_DAMAGE
+	return _item_damage(data)
+
+
+## Retorna 1x com as mãos; machados e picaretas escalam pelo dano da ferramenta.
+func tool_power(peer: int, kind: StringName) -> float:
+	var required_tool := kind
+	match kind:
+		&"wood", &"wood_log", &"tree", &"axe":
+			required_tool = &"axe"
+		&"stone", &"ore", &"mining", &"pickaxe":
+			required_tool = &"pickaxe"
+	if required_tool not in [&"axe", &"pickaxe"]:
+		return 1.0
+	var data := _item_data.get(selected_item(peer)) as ItemDefinition
+	if data == null or data.tool_type != required_tool:
+		return 1.0
+	return maxf(_item_damage(data) / HAND_DAMAGE, 1.0)
+
+
+func _item_damage(data: ItemDefinition) -> float:
+	if data.damage > 0.0:
+		return data.damage
+	match data.tier:
+		1:
+			return 6.0
+		2:
+			return 8.0
+		3:
+			return 12.0
+		_:
+			return HAND_DAMAGE
 
 
 func transact(peer: int, costs: Dictionary, rewards: Dictionary) -> bool:
@@ -114,12 +166,31 @@ func _request_hotbar_assignment(slot: int, item_id: StringName) -> void:
 		set_hotbar_slot(peer, slot, item_id)
 
 
+@rpc("any_peer", "call_remote", "reliable")
+func _request_selected_hotbar_slot(slot: int) -> void:
+	if not _is_server() or slot < 0 or slot >= HOTBAR_COUNT:
+		return
+	var peer := multiplayer.get_remote_sender_id()
+	if peer <= 0:
+		return
+	_state_for(peer)["selected_slot"] = slot
+
+
 func hotbar_snapshot(peer: int) -> Array:
 	return _state_for(peer)["hotbar"].duplicate()
 
 
 func select_hotbar_slot(index: int) -> void:
-	selected_hotbar_slot = wrapi(index, 0, HOTBAR_COUNT)
+	if index < 0 or index >= HOTBAR_COUNT:
+		return
+	selected_hotbar_slot = index
+	if _is_server():
+		var peer := multiplayer.get_unique_id()
+		if peer <= 0:
+			peer = 1
+		_state_for(peer)["selected_slot"] = index
+	else:
+		_request_selected_hotbar_slot.rpc_id(1, index)
 	hotbar_selected.emit(selected_hotbar_slot)
 
 
@@ -130,7 +201,7 @@ func _state_for(peer: int) -> Dictionary:
 			slots.append({"id": &"", "amount": 0})
 		var hotbar: Array[StringName] = []
 		hotbar.resize(HOTBAR_COUNT)
-		_states[peer] = {"slots": slots, "hotbar": hotbar}
+		_states[peer] = {"slots": slots, "hotbar": hotbar, "selected_slot": 0}
 	return _states[peer]
 
 
@@ -187,8 +258,8 @@ func _commit_state(peer: int) -> void:
 			state["hotbar"][index] = &""
 	changed.emit(peer)
 	hotbar_changed.emit(peer)
-	if _is_server() and multiplayer.has_multiplayer_peer() and multiplayer.get_peers().size() > 0:
-		_rpc_sync_peer.rpc(peer, _serialize_slots(peer), _serialize_hotbar(peer))
+	if _is_server() and multiplayer.has_multiplayer_peer() and multiplayer.get_peers().has(peer):
+		_rpc_sync_peer.rpc_id(peer, peer, _serialize_slots(peer), _serialize_hotbar(peer))
 
 
 func _serialize_slots(peer: int) -> Array:
@@ -208,12 +279,15 @@ func _serialize_hotbar(peer: int) -> Array:
 func _on_peer_connected(new_peer: int) -> void:
 	if not _is_server():
 		return
-	for peer: Variant in _states:
-		_rpc_sync_peer.rpc_id(new_peer, int(peer), _serialize_slots(int(peer)), _serialize_hotbar(int(peer)))
+	_state_for(new_peer)
+	if multiplayer.get_peers().has(new_peer):
+		_rpc_sync_peer.rpc_id(new_peer, new_peer, _serialize_slots(new_peer), _serialize_hotbar(new_peer))
 
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_sync_peer(peer: int, slots: Array, hotbar: Array) -> void:
+	if not _is_server() and peer != multiplayer.get_unique_id():
+		return
 	var converted_slots: Array = []
 	for slot: Dictionary in slots:
 		converted_slots.append({"id": StringName(str(slot.get("id", ""))), "amount": int(slot.get("amount", 0))})
@@ -227,7 +301,7 @@ func _rpc_sync_peer(peer: int, slots: Array, hotbar: Array) -> void:
 		else:
 			resized.append({"id": &"", "amount": 0})
 	converted_hotbar.resize(HOTBAR_COUNT)
-	_states[peer] = {"slots": resized, "hotbar": converted_hotbar}
+	_states[peer] = {"slots": resized, "hotbar": converted_hotbar, "selected_slot": selected_hotbar_slot}
 	changed.emit(peer)
 	hotbar_changed.emit(peer)
 

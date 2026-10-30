@@ -396,13 +396,23 @@ func _selftest_net() -> void:
 	await get_tree().create_timer(1.0).timeout
 	print("[nettest] caça remota: carne +%d %s | animal removido no cliente: %s" % [inv.count(peer, &"raw_meat") - m0, "OK" if inv.count(peer, &"raw_meat") > m0 else "FALHOU", not _fauna.animals.has(target_uid)])
 	var wood_idx := -1
+	var best_d := INF
 	for i in _island.harvestables.size():
-		if (_island.harvestables[i][1] as VegetationEntry).harvest_item == &"wood_log":
+		var hd: float = _island.harvestables[i][0].distance_to(_player.global_position)
+		if (_island.harvestables[i][1] as VegetationEntry).harvest_item == &"wood_log" and hd < best_d:
 			wood_idx = i
-			break
+			best_d = hd
 	var pos: Vector3 = _island.harvestables[wood_idx][0]
-	_player.teleport_to(pos + Vector3(2, 1, 0))
-	await get_tree().create_timer(1.0).timeout   # o servidor recebe a posição pelo Net
+	var goal := pos + Vector3(2, 1, 0)
+	# Anda em passos curtos: o servidor rejeita teleportes (anti-trapaça).
+	var steps := 0
+	while Vector2(_player.global_position.x - goal.x, _player.global_position.z - goal.z).length() > 0.5 and steps < 80:
+		steps += 1
+		var nxt := _player.global_position.move_toward(goal, 12.0)
+		nxt.y = goal.y + 1.0
+		_player.teleport_to(nxt)
+		await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5).timeout
 	var origin := _player.global_position + Vector3.UP * 1.6
 	var dir := ((pos + Vector3.UP * 0.8) - origin).normalized()
 	var w0: int = inv.count(peer, &"wood_log")

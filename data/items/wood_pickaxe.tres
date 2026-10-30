@@ -13,4 +13,5 @@ tier = 1
 category = &"tool"
 food_value = 0
 tool_type = &"pickaxe"
+damage = 6.0
 durability = 70

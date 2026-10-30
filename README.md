@@ -126,3 +126,18 @@ data/world/ biomes/ vegetation/ items/
 - **Nova planta/árvore:** crie um `VegetationEntry` em `data/vegetation/` apontando para os `.gltf` e adicione ao bioma.
 - **Novo item:** crie um `ItemData` em `data/items/` — aparece sozinho no inventário criativo.
 - **Fome com o tempo:** chame `player.hunger -= x`; o HUD já reage ao sinal `hunger_changed`.
+
+## Etapa 2 — sobrevivência online (Claude + Codex)
+
+Veja `docs/GDD.md` (design), `docs/CONTRACTS.md` (divisão e APIs) e `docs/ONLINE.md` (como hospedar).
+
+- **Online:** solo, host, cliente e servidor dedicado (ENet, host-autoritativo, até 16 jogadores).
+- **Estações:** 24 dias por ano (20 min por dia); folhas ficam laranja no outono e caem no inverno; frutos e cio dependem da estação.
+- **Fauna (10 espécies):** coelho, cervo, javali, cabra-da-montanha, capivara, lobo, raposa, urso, galinha, tartaruga.
+  Genes herdáveis (tamanho, velocidade, vida, fome, fertilidade, agressividade, cor, padrão) com mutação,
+  gestação, filhotes que crescem, predação, domesticação (T com comida) e inspetor de genética ao mirar.
+- **Flora:** árvores/arbustos dão lenha, fibra, pedra; várias frutificam por estação (F colhe). Pinheiros dão sementes.
+- **Itens/crafting/construção/progressão (Codex):** 50 itens, 40 receitas, 10 peças de construção, XP e níveis.
+- **Controles novos:** botão esquerdo bate/coleta, F colhe fruto, T doma, E inventário/crafting.
+- **Testes:** `godot --headless --path . -- --solo --seed=42 --selftest` (integração) e
+  `--server` + `--join=127.0.0.1 --selftest-net` (rede).
