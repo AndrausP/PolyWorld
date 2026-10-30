@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="VegetationEntry" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="1_entry"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/CommonTree_1.gltf" id="m0"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/CommonTree_2.gltf" id="m1"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/CommonTree_3.gltf" id="m2"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/CommonTree_4.gltf" id="m3"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/CommonTree_5.gltf" id="m4"]
+
+[resource]
+script = ExtResource("1_entry")
+display_name = "Árvore (planície)"
+scenes = Array[PackedScene]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3"), ExtResource("m4")])
+density = 0.025
+min_scale = 0.85
+max_scale = 1.25
+layer = 0
+max_slope = 0.3
+sink = 0.2
+collision_radius = 0.3
+collision_height = 4.0
+view_distance = 380.0
+wind_strength = 0.35
+leaf_tint = Color(0.62, 0.88, 0.25, 1)

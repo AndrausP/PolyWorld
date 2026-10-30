@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="BiomeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/biome_data.gd" id="1_biome"]
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/vegetation/tree_plains.tres" id="v0"]
+[ext_resource type="Resource" path="res://data/vegetation/bush_flowers.tres" id="v1"]
+[ext_resource type="Resource" path="res://data/vegetation/bush_plains.tres" id="v2"]
+[ext_resource type="Resource" path="res://data/vegetation/rock_plains.tres" id="v3"]
+[ext_resource type="Resource" path="res://data/vegetation/grass_plains.tres" id="v4"]
+[ext_resource type="Resource" path="res://data/vegetation/grass_tall_plains.tres" id="v5"]
+[ext_resource type="Resource" path="res://data/vegetation/flowers.tres" id="v6"]
+[ext_resource type="Resource" path="res://data/vegetation/clover_plains.tres" id="v7"]
+
+[resource]
+script = ExtResource("1_biome")
+display_name = "Planície"
+color = Color(0.5, 0.76, 0.27, 1)
+color_variation = 0.06
+rock_on_slopes = true
+min_height = 0.025
+max_height = 0.52
+min_moisture = 0.36
+max_moisture = 0.64
+vegetation = Array[ExtResource("2_entry")]([ExtResource("v0"), ExtResource("v1"), ExtResource("v2"), ExtResource("v3"), ExtResource("v4"), ExtResource("v5"), ExtResource("v6"), ExtResource("v7")])

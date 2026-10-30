@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="VegetationEntry" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="1_entry"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Rock_Medium_1.gltf" id="m0"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Rock_Medium_2.gltf" id="m1"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Rock_Medium_3.gltf" id="m2"]
+
+[resource]
+script = ExtResource("1_entry")
+display_name = "Pedra nevada"
+scenes = Array[PackedScene]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2")])
+density = 0.03
+min_scale = 0.7
+max_scale = 1.8
+layer = 0
+max_slope = 0.7
+sink = 0.3
+align_to_ground = true
+view_distance = 300.0
+wind_strength = 0.0
+collision_radius = 1.1
+collision_is_sphere = true
+snow_cover = 0.7

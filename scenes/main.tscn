@@ -1,0 +1,137 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/world/island_generator.gd" id="2_island"]
+[ext_resource type="Resource" path="res://data/world/default_world.tres" id="3_config"]
+[ext_resource type="Shader" path="res://shaders/terrain.gdshader" id="4_terrain"]
+[ext_resource type="Shader" path="res://shaders/water.gdshader" id="5_water"]
+[ext_resource type="Script" path="res://scripts/world/water.gd" id="6_water"]
+[ext_resource type="Script" path="res://scripts/world/vegetation_spawner.gd" id="7_vegetation"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="8_player"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="9_hud"]
+[ext_resource type="Shader" path="res://shaders/sky.gdshader" id="10_sky"]
+[ext_resource type="Shader" path="res://shaders/river.gdshader" id="11_river"]
+[ext_resource type="Texture2D" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Rocks_Diffuse.png" id="12_rock"]
+[ext_resource type="Script" path="res://scripts/ui/loading_screen.gd" id="13_loading"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
+shader = ExtResource("10_sky")
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ShaderMaterial_sky")
+radiance_size = 1
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 3
+ambient_light_energy = 1.0
+reflected_light_source = 2
+tonemap_mode = 2
+tonemap_white = 1.3
+glow_enabled = true
+glow_intensity = 0.35
+glow_bloom = 0.06
+glow_blend_mode = 1
+glow_hdr_threshold = 1.4
+fog_enabled = true
+fog_light_color = Color(0.72, 0.86, 0.96, 1)
+fog_density = 0.0012
+fog_sky_affect = 0.2
+adjustment_enabled = true
+adjustment_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_terrain"]
+shader = ExtResource("4_terrain")
+shader_parameter/rock_tex = ExtResource("12_rock")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_river"]
+render_priority = 1
+shader = ExtResource("11_river")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_water"]
+shader = ExtResource("5_water")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_seabed"]
+albedo_color = Color(0.7, 0.64, 0.48, 1)
+roughness = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_seabed"]
+material = SubResource("StandardMaterial3D_seabed")
+size = Vector2(4000, 4000)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-48, -35, 0)
+light_color = Color(1, 0.95, 0.85, 1)
+light_energy = 1.25
+shadow_enabled = true
+shadow_blur = 1.5
+directional_shadow_max_distance = 140.0
+
+[node name="IslandGenerator" type="Node3D" parent="."]
+script = ExtResource("2_island")
+config = ExtResource("3_config")
+terrain_material = SubResource("ShaderMaterial_terrain")
+river_material = SubResource("ShaderMaterial_river")
+
+[node name="Terrain" type="Node3D" parent="IslandGenerator"]
+
+[node name="TerrainBody" type="StaticBody3D" parent="IslandGenerator"]
+
+[node name="Rivers" type="Node3D" parent="IslandGenerator"]
+
+[node name="Seabed" type="MeshInstance3D" parent="IslandGenerator"]
+mesh = SubResource("PlaneMesh_seabed")
+cast_shadow = 0
+
+[node name="Water" type="MeshInstance3D" parent="IslandGenerator"]
+material_override = SubResource("ShaderMaterial_water")
+script = ExtResource("6_water")
+
+[node name="Vegetation" type="Node3D" parent="IslandGenerator"]
+script = ExtResource("7_vegetation")
+
+[node name="Player" parent="." instance=ExtResource("8_player")]
+
+[node name="HUD" parent="." instance=ExtResource("9_hud")]
+
+[node name="LoadingScreen" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("13_loading")
+
+[node name="Background" type="ColorRect" parent="LoadingScreen"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.16, 0.22, 1)
+
+[node name="Center" type="CenterContainer" parent="LoadingScreen/Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="LoadingScreen/Background/Center"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="LoadingScreen/Background/Center/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "PolyWorld"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="LoadingScreen/Background/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.9, 1)
+text = "Gerando ilha..."
+horizontal_alignment = 1

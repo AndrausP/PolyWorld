@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="VegetationEntry" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="1_entry"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Grass_Common_Tall.gltf" id="m0"]
+
+[resource]
+script = ExtResource("1_entry")
+display_name = "Grama alta"
+scenes = Array[PackedScene]([ExtResource("m0")])
+density = 0.12
+min_scale = 0.55
+max_scale = 0.85
+layer = 1
+max_slope = 0.45
+sink = 0.03
+align_to_ground = true
+cast_shadows = false
+view_distance = 70.0
+wind_strength = 0.18

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BiomeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/biome_data.gd" id="1_biome"]
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/vegetation/pine_mountain.tres" id="v0"]
+[ext_resource type="Resource" path="res://data/vegetation/dead_tree.tres" id="v1"]
+[ext_resource type="Resource" path="res://data/vegetation/rock_mountain.tres" id="v2"]
+[ext_resource type="Resource" path="res://data/vegetation/grass_mountain.tres" id="v3"]
+
+[resource]
+script = ExtResource("1_biome")
+display_name = "Montanha"
+color = Color(0.55, 0.55, 0.5, 1)
+color_variation = 0.06
+rock_on_slopes = true
+min_height = 0.52
+max_height = 0.66
+min_moisture = 0.0
+max_moisture = 1.0
+vegetation = Array[ExtResource("2_entry")]([ExtResource("v0"), ExtResource("v1"), ExtResource("v2"), ExtResource("v3")])

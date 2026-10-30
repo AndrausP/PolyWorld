@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://scripts/items/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"seeds"
+display_name = "Sementes"
+description = "Para plantar (futuro)."
+icon_color = Color(0.6, 0.75, 0.3, 1)
+max_stack = 64

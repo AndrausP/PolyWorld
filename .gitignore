@@ -1,0 +1,13 @@
+# Cache do Godot
+.godot/
+*.tmp
+
+# Duplicatas do kit de modelos (o projeto usa só a pasta glTF)
+assets/Stylized Nature MegaKit[[]Standard[]]/FBX/
+assets/Stylized Nature MegaKit[[]Standard[]]/FBX (Unity)/
+assets/Stylized Nature MegaKit[[]Standard[]]/OBJ/
+assets/Stylized Nature MegaKit[[]Standard[]]/Textures/
+
+# Lixo do Windows
+desktop.ini
+Thumbs.db

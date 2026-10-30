@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="VegetationEntry" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="1_entry"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Plant_1_Big.gltf" id="m0"]
+
+[resource]
+script = ExtResource("1_entry")
+display_name = "Planta grande"
+scenes = Array[PackedScene]([ExtResource("m0")])
+density = 0.03
+min_scale = 0.45
+max_scale = 0.7
+layer = 0
+max_slope = 0.4
+sink = 0.05
+view_distance = 90.0
+wind_strength = 0.12
+cast_shadows = false

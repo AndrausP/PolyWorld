@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="VegetationEntry" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="1_entry"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Plant_1.gltf" id="m0"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Plant_7.gltf" id="m1"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Plant_7_Big.gltf" id="m2"]
+
+[resource]
+script = ExtResource("1_entry")
+display_name = "Plantinhas"
+scenes = Array[PackedScene]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2")])
+density = 0.06
+min_scale = 0.5
+max_scale = 0.9
+layer = 1
+max_slope = 0.45
+sink = 0.03
+align_to_ground = true
+cast_shadows = false
+view_distance = 60.0
+wind_strength = 0.1

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="VegetationEntry" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="1_entry"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Round_1.gltf" id="m0"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Round_2.gltf" id="m1"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Round_3.gltf" id="m2"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Round_4.gltf" id="m3"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Round_5.gltf" id="m4"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Square_1.gltf" id="m5"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Square_2.gltf" id="m6"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Square_3.gltf" id="m7"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Square_4.gltf" id="m8"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Square_5.gltf" id="m9"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Pebble_Square_6.gltf" id="m10"]
+
+[resource]
+script = ExtResource("1_entry")
+display_name = "Seixos"
+scenes = Array[PackedScene]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3"), ExtResource("m4"), ExtResource("m5"), ExtResource("m6"), ExtResource("m7"), ExtResource("m8"), ExtResource("m9"), ExtResource("m10")])
+density = 0.04
+min_scale = 0.8
+max_scale = 1.6
+layer = 1
+max_slope = 0.45
+sink = 0.02
+align_to_ground = true
+cast_shadows = false
+view_distance = 45.0
+wind_strength = 0.0

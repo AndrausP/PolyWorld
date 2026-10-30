@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BiomeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/biome_data.gd" id="1_biome"]
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/vegetation/pebbles.tres" id="v0"]
+[ext_resource type="Resource" path="res://data/vegetation/grass_beach.tres" id="v1"]
+
+[resource]
+script = ExtResource("1_biome")
+display_name = "Praia"
+color = Color(0.93, 0.85, 0.62, 1)
+color_variation = 0.04
+rock_on_slopes = false
+min_height = 0.0
+max_height = 0.025
+min_moisture = 0.0
+max_moisture = 1.0
+vegetation = Array[ExtResource("2_entry")]([ExtResource("v0"), ExtResource("v1")])

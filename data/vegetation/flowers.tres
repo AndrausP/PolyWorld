@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="VegetationEntry" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="1_entry"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Flower_3_Group.gltf" id="m0"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Flower_4_Group.gltf" id="m1"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Flower_3_Single.gltf" id="m2"]
+[ext_resource type="PackedScene" path="res://assets/Stylized Nature MegaKit[Standard]/glTF/Flower_4_Single.gltf" id="m3"]
+
+[resource]
+script = ExtResource("1_entry")
+display_name = "Flores"
+scenes = Array[PackedScene]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3")])
+density = 0.06
+min_scale = 0.35
+max_scale = 0.55
+layer = 1
+max_slope = 0.45
+sink = 0.03
+align_to_ground = true
+cast_shadows = false
+view_distance = 60.0
+wind_strength = 0.12

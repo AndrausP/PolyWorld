@@ -1,0 +1,206 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
+[ext_resource type="Script" path="res://scripts/ui/crosshair.gd" id="2_crosshair"]
+[ext_resource type="Script" path="res://scripts/ui/stat_bar.gd" id="3_statbar"]
+[ext_resource type="Script" path="res://scripts/ui/hotbar.gd" id="4_hotbar"]
+[ext_resource type="Script" path="res://scripts/ui/debug_overlay.gd" id="5_debug"]
+[ext_resource type="Script" path="res://scripts/items/item_data.gd" id="6_item"]
+[ext_resource type="Resource" path="res://data/items/wood_log.tres" id="7_wood"]
+[ext_resource type="Resource" path="res://data/items/stone.tres" id="8_stone"]
+[ext_resource type="Resource" path="res://data/items/apple.tres" id="9_apple"]
+[ext_resource type="Resource" path="res://data/items/seeds.tres" id="10_seeds"]
+[ext_resource type="Script" path="res://scripts/ui/dev_tools_ui.gd" id="11_devtools"]
+[ext_resource type="Script" path="res://scripts/ui/creative_inventory.gd" id="12_inventory"]
+[ext_resource type="Script" path="res://scripts/ui/world_map.gd" id="13_map"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 0.45)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dev"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.45, 0.15, 0.55, 0.55)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inventory"]
+bg_color = Color(0.12, 0.12, 0.14, 0.92)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.55, 0.55, 0.58, 1)
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="Crosshair" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_crosshair")
+
+[node name="BottomBar" type="VBoxContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -110.0
+offset_right = 200.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 2
+
+[node name="ItemName" type="Label" parent="BottomBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+horizontal_alignment = 1
+
+[node name="Stats" type="HBoxContainer" parent="BottomBar"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="HealthBar" type="Control" parent="BottomBar/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_statbar")
+
+[node name="Spacer" type="Control" parent="BottomBar/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="HungerBar" type="Control" parent="BottomBar/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_statbar")
+icon_type = 1
+right_to_left = true
+
+[node name="Hotbar" type="Control" parent="BottomBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("4_hotbar")
+items = Array[ExtResource("6_item")]([ExtResource("7_wood"), ExtResource("8_stone"), ExtResource("9_apple"), ExtResource("10_seeds")])
+
+[node name="DebugOverlay" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 8.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_debug")
+script = ExtResource("5_debug")
+
+[node name="DevTools" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("11_devtools")
+
+[node name="DevLabel" type="Label" parent="DevTools"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -420.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 72.0
+grow_horizontal = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_dev")
+horizontal_alignment = 2
+
+[node name="CreativeInventory" type="PanelContainer" parent="DevTools"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -170.0
+offset_right = 260.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_inventory")
+script = ExtResource("12_inventory")
+
+[node name="Margin" type="MarginContainer" parent="DevTools/CreativeInventory"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="DevTools/CreativeInventory/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="DevTools/CreativeInventory/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Itens (modo dev)"
+
+[node name="Hint" type="Label" parent="DevTools/CreativeInventory/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
+text = "Clique num item para colocá-lo no slot selecionado (1-9 / roda trocam o slot). E ou ESC fecha."
+autowrap_mode = 3
+
+[node name="Grid" type="GridContainer" parent="DevTools/CreativeInventory/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 9
+
+[node name="ClearButton" type="Button" parent="DevTools/CreativeInventory/Margin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Limpar hotbar"
+
+[node name="WorldMap" type="Control" parent="DevTools"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("13_map")

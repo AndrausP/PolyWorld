@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WorldConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/world_config.gd" id="1_config"]
+[ext_resource type="Script" path="res://scripts/world/biome_data.gd" id="2_biome"]
+[ext_resource type="Resource" path="res://data/biomes/seabed.tres" id="b0"]
+[ext_resource type="Resource" path="res://data/biomes/beach.tres" id="b1"]
+[ext_resource type="Resource" path="res://data/biomes/snow.tres" id="b2"]
+[ext_resource type="Resource" path="res://data/biomes/mountain.tres" id="b3"]
+[ext_resource type="Resource" path="res://data/biomes/forest.tres" id="b4"]
+[ext_resource type="Resource" path="res://data/biomes/plains.tres" id="b5"]
+[ext_resource type="Resource" path="res://data/biomes/pampas.tres" id="b6"]
+
+[resource]
+script = ExtResource("1_config")
+world_seed = 1337
+size_cells = 512
+cell_size = 2.0
+max_height = 110.0
+sea_level = 0.0
+sea_threshold = 0.18
+chunk_cells = 64
+biomes = Array[ExtResource("2_biome")]([ExtResource("b0"), ExtResource("b1"), ExtResource("b2"), ExtResource("b3"), ExtResource("b4"), ExtResource("b5"), ExtResource("b6")])
+slope_biome = ExtResource("b3")
+spawn_biome = ExtResource("b1")

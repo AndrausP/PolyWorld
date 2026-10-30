@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BiomeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/biome_data.gd" id="1_biome"]
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/vegetation/tree_autumn.tres" id="v0"]
+[ext_resource type="Resource" path="res://data/vegetation/twisted_red.tres" id="v1"]
+[ext_resource type="Resource" path="res://data/vegetation/bush_dry.tres" id="v2"]
+[ext_resource type="Resource" path="res://data/vegetation/rock_pampas.tres" id="v3"]
+[ext_resource type="Resource" path="res://data/vegetation/grass_pampas.tres" id="v4"]
+[ext_resource type="Resource" path="res://data/vegetation/grass_pampas_orange.tres" id="v5"]
+[ext_resource type="Resource" path="res://data/vegetation/grass_pampas_yellow.tres" id="v6"]
+
+[resource]
+script = ExtResource("1_biome")
+display_name = "Pampa"
+color = Color(0.7, 0.7, 0.38, 1)
+color_variation = 0.06
+rock_on_slopes = true
+min_height = 0.025
+max_height = 0.52
+min_moisture = 0.0
+max_moisture = 0.36
+vegetation = Array[ExtResource("2_entry")]([ExtResource("v0"), ExtResource("v1"), ExtResource("v2"), ExtResource("v3"), ExtResource("v4"), ExtResource("v5"), ExtResource("v6")])

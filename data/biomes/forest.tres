@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="BiomeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/world/biome_data.gd" id="1_biome"]
+[ext_resource type="Script" path="res://scripts/world/vegetation_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/vegetation/pine_forest.tres" id="v0"]
+[ext_resource type="Resource" path="res://data/vegetation/tree_forest.tres" id="v1"]
+[ext_resource type="Resource" path="res://data/vegetation/bush_forest.tres" id="v2"]
+[ext_resource type="Resource" path="res://data/vegetation/fern.tres" id="v3"]
+[ext_resource type="Resource" path="res://data/vegetation/plant_big.tres" id="v4"]
+[ext_resource type="Resource" path="res://data/vegetation/rock_small.tres" id="v5"]
+[ext_resource type="Resource" path="res://data/vegetation/grass_forest.tres" id="v6"]
+[ext_resource type="Resource" path="res://data/vegetation/clover.tres" id="v7"]
+[ext_resource type="Resource" path="res://data/vegetation/mushrooms.tres" id="v8"]
+[ext_resource type="Resource" path="res://data/vegetation/plant_small.tres" id="v9"]
+
+[resource]
+script = ExtResource("1_biome")
+display_name = "Floresta"
+color = Color(0.32, 0.52, 0.2, 1)
+color_variation = 0.06
+rock_on_slopes = true
+min_height = 0.025
+max_height = 0.52
+min_moisture = 0.64
+max_moisture = 1.0
+vegetation = Array[ExtResource("2_entry")]([ExtResource("v0"), ExtResource("v1"), ExtResource("v2"), ExtResource("v3"), ExtResource("v4"), ExtResource("v5"), ExtResource("v6"), ExtResource("v7"), ExtResource("v8"), ExtResource("v9")])
