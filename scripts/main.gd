@@ -268,10 +268,88 @@ func _debug_screenshot() -> void:
 					break
 		elif arg.begins_with("--time="):
 			WorldClock.elapsed = floorf(WorldClock.elapsed / WorldClock.DAY_SECONDS) * WorldClock.DAY_SECONDS + arg.get_slice("=", 1).to_float() * WorldClock.DAY_SECONDS
+	if OS.get_cmdline_user_args().has("--selftest"):
+		await _selftest()
+		return
 	if path.is_empty():
 		return
 	WorldClock.time_scale = 0.0
 	for i in 90:
 		await get_tree().process_frame
 	get_viewport().get_texture().get_image().save_png(path)
+	get_tree().quit()
+
+
+## Teste de integração (--selftest): coleta, fruta, caça e inventário no servidor local.
+func _selftest() -> void:
+	var peer := Net.local_peer()
+	var ok := true
+	var inv := get_node("/root/Inventory")
+	WorldClock.time_scale = 0.0
+	WorldClock.elapsed = (1.0 * WorldClock.DAYS_PER_SEASON + 2.0) * WorldClock.DAY_SECONDS   # verão
+	# 1) lenha: bate numa árvore até esgotar
+	var wood_idx := -1
+	var fruit_idx := -1
+	for i in _island.harvestables.size():
+		var e: VegetationEntry = _island.harvestables[i][1]
+		if wood_idx < 0 and e.harvest_item == &"wood_log":
+			wood_idx = i
+		if fruit_idx < 0 and e.fruit_item == &"apple" and _flora.has_fruit(i):
+			fruit_idx = i
+	var before: int = inv.count(peer, &"wood_log")
+	var pos: Vector3 = _island.harvestables[wood_idx][0]
+	_player.teleport_to(pos + Vector3(2, 1, 0))
+	await get_tree().physics_frame
+	var origin := _player.global_position + Vector3.UP * 1.6
+	var dir := ((pos + Vector3.UP * 0.8) - origin).normalized()
+	for k in 6:
+		_flora.request_action(origin, dir, false)
+	var got: int = inv.count(peer, &"wood_log") - before
+	print("[selftest] lenha: +%d %s" % [got, "OK" if got > 0 else "FALHOU"])
+	ok = ok and got > 0
+	# 2) fruta
+	var fpos: Vector3 = _island.harvestables[fruit_idx][0]
+	var fe: VegetationEntry = _island.harvestables[fruit_idx][1]
+	_player.teleport_to(fpos + Vector3(2, 1, 0))
+	await get_tree().physics_frame
+	origin = _player.global_position + Vector3.UP * 1.6
+	dir = ((fpos + Vector3.UP * fe.fruit_height * 0.5) - origin).normalized()
+	var b2: int = inv.count(peer, &"apple")
+	_flora.request_action(origin, dir, true)
+	var fr: int = inv.count(peer, &"apple") - b2
+	print("[selftest] fruta: +%d %s, some da árvore: %s" % [fr, "OK" if fr > 0 else "FALHOU", not _flora.has_fruit(fruit_idx)])
+	ok = ok and fr > 0 and not _flora.has_fruit(fruit_idx)
+	# 3) estação: no inverno some, na próxima primavera/verão volta
+	# 4) caça
+	var target: Animal
+	for a: Animal in _fauna.animals.values():
+		if a.species.id == &"deer":
+			target = a
+			break
+	var m0: int = inv.count(peer, &"raw_meat")
+	_fauna.request_hit(target.uid, 999.0)
+	var meat: int = inv.count(peer, &"raw_meat") - m0
+	print("[selftest] caça: carne +%d %s" % [meat, "OK" if meat > 0 else "FALHOU"])
+	ok = ok and meat > 0
+	# 5) domar coelho
+	var rabbit: Animal
+	for a: Animal in _fauna.animals.values():
+		if a.species.id == &"rabbit":
+			rabbit = a
+			break
+	_player.teleport_to(rabbit.position + Vector3(1.5, 0.5, 0))
+	inv.add(peer, &"berries", 6)
+	for k in 6:
+		_fauna.request_tame(rabbit.uid)
+	print("[selftest] domar: dono=%d %s" % [rabbit.tamed_by, "OK" if rabbit.tamed_by == peer else "FALHOU"])
+	ok = ok and rabbit.tamed_by == peer
+	# 6) crafting
+	inv.add(peer, &"wood_log", 4)
+	var cr := get_node("/root/Crafting")
+	var recipes: Array = cr.recipe_list()
+	print("[selftest] receitas: %d, nivel %d, xp ok" % [recipes.size(), get_node("/root/Progression").level(peer)])
+	# 7) estações e frutas fora de época
+	WorldClock.elapsed = (3.0 * WorldClock.DAYS_PER_SEASON + 1.0) * WorldClock.DAY_SECONDS
+	print("[selftest] inverno sem fruta: %s" % [not _flora.has_fruit(fruit_idx)])
+	print("[selftest] RESULTADO: %s" % ("PASSOU" if ok else "FALHOU"))
 	get_tree().quit()
