@@ -21,6 +21,7 @@ var _fruit_mm: MultiMeshInstance3D
 var _fruit_acc := 0.0
 var _focus_fn: Callable = func() -> Vector3: return Vector3.INF
 var _rng := RandomNumberGenerator.new()
+var _last_action: Dictionary = {}     ## peer -> último golpe/colheita (s)
 
 
 func setup(isl: IslandGenerator, player_pos_fn: Callable, focus_fn: Callable) -> void:
@@ -109,8 +110,13 @@ func _rpc_action(origin: Vector3, dir: Vector3, fruit: bool) -> void:
 
 func _do_action(peer: int, origin: Vector3, dir: Vector3, fruit: bool) -> void:
 	var pp: Vector3 = _player_pos_fn.call(peer)
-	if pp == Vector3.INF or pp.distance_to(origin) > 4.0:
+	if pp == Vector3.INF or dir.length_squared() < 0.01:
 		return
+	var now := Time.get_ticks_msec() / 1000.0
+	if now - _last_action.get(peer, -10.0) < 0.22:
+		return
+	_last_action[peer] = now
+	origin = pp + Vector3.UP * 1.6   # olho do jogador conforme o servidor
 	dir = dir.normalized()
 	var idx := _pick(origin, dir, fruit)
 	if idx < 0:

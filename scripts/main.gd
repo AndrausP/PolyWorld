@@ -234,6 +234,14 @@ func _ensure_remote(peer: int) -> RemotePlayer:
 
 func _on_remote_state(peer: int, pos: Vector3, yaw: float, pitch: float) -> void:
 	var rp := _ensure_remote(peer)
+	if Net.is_server():
+		# Anti-teleporte: limita a velocidade aceita (voo/nado/corrida < 25 m/s).
+		var now := Time.get_ticks_msec() / 1000.0
+		var dt := clampf(now - rp.last_update, 0.05, 1.0)
+		if rp.has_state and rp.get_target().distance_to(pos) > 25.0 * dt + 3.0:
+			pos = rp.get_target().move_toward(pos, 25.0 * dt + 3.0)
+		rp.last_update = now
+		rp.has_state = true
 	rp.set_state(pos, yaw, pitch)
 
 
@@ -307,6 +315,7 @@ func _selftest() -> void:
 	var dir := ((pos + Vector3.UP * 0.8) - origin).normalized()
 	for k in 6:
 		_flora.request_action(origin, dir, false)
+		await get_tree().create_timer(0.3).timeout
 	var got: int = inv.count(peer, &"wood_log") - before
 	print("[selftest] lenha: +%d %s" % [got, "OK" if got > 0 else "FALHOU"])
 	ok = ok and got > 0
@@ -318,6 +327,7 @@ func _selftest() -> void:
 	origin = _player.global_position + Vector3.UP * 1.6
 	dir = ((fpos + Vector3.UP * fe.fruit_height * 0.5) - origin).normalized()
 	var b2: int = inv.count(peer, &"apple")
+	await get_tree().create_timer(0.3).timeout
 	_flora.request_action(origin, dir, true)
 	var fr: int = inv.count(peer, &"apple") - b2
 	print("[selftest] fruta: +%d %s, some da árvore: %s" % [fr, "OK" if fr > 0 else "FALHOU", not _flora.has_fruit(fruit_idx)])
@@ -330,7 +340,12 @@ func _selftest() -> void:
 			target = a
 			break
 	var m0: int = inv.count(peer, &"raw_meat")
-	_fauna.request_hit(target.uid, 999.0)
+	for k in 40:   # golpes reais: dano vem do servidor, então são vários
+		if not is_instance_valid(target) or target.health <= 0.0:
+			break
+		_player.teleport_to(target.position + Vector3(1.5, 0.5, 0))
+		_fauna.request_hit(target.uid, 0.0)
+		await get_tree().create_timer(0.4).timeout
 	var meat: int = inv.count(peer, &"raw_meat") - m0
 	print("[selftest] caça: carne +%d %s" % [meat, "OK" if meat > 0 else "FALHOU"])
 	ok = ok and meat > 0
@@ -371,8 +386,14 @@ func _selftest_net() -> void:
 			break
 	var target_uid := target.uid
 	var m0: int = inv.count(peer, &"raw_meat")
-	_fauna.request_hit.rpc_id(1, target_uid, 999.0)
-	await get_tree().create_timer(2.0).timeout
+	for k in 40:
+		if not _fauna.animals.has(target_uid):
+			break
+		_player.teleport_to(_fauna.animals[target_uid].position + Vector3(1.5, 0.5, 0))
+		await get_tree().create_timer(0.2).timeout
+		_fauna.request_hit.rpc_id(1, target_uid, 0.0)
+		await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(1.0).timeout
 	print("[nettest] caça remota: carne +%d %s | animal removido no cliente: %s" % [inv.count(peer, &"raw_meat") - m0, "OK" if inv.count(peer, &"raw_meat") > m0 else "FALHOU", not _fauna.animals.has(target_uid)])
 	var wood_idx := -1
 	for i in _island.harvestables.size():
@@ -387,6 +408,7 @@ func _selftest_net() -> void:
 	var w0: int = inv.count(peer, &"wood_log")
 	for k in 6:
 		_flora.request_action(origin, dir, false)
-	await get_tree().create_timer(1.5).timeout
+		await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(1.0).timeout
 	print("[nettest] lenha remota: +%d %s" % [inv.count(peer, &"wood_log") - w0, "OK" if inv.count(peer, &"wood_log") > w0 else "FALHOU"])
 	get_tree().quit()

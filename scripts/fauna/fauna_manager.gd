@@ -14,6 +14,7 @@ var _next_uid := 1
 var _acc := 0.0
 var _sync_acc := 0.0
 var _respawn_acc := 0.0
+var _last_hit: Dictionary = {}   ## peer -> último golpe (s)
 var _rng := RandomNumberGenerator.new()
 var _players_fn: Callable = func() -> Array: return []   ## -> Array[Node3D]
 var _is_server := true
@@ -157,6 +158,7 @@ func request_tame(uid: int) -> void:
 		if not paid:
 			return
 	a.tame_progress += 100.0 / (3.0 + a.genes[Genes.G.AGGRESSION] * 2.0)
+	notify_status(a)
 	a.hunger = minf(a.max_hunger, a.hunger + 25.0)
 	if a.tame_progress >= 100.0:
 		a.tamed_by = peer
@@ -165,6 +167,19 @@ func request_tame(uid: int) -> void:
 			_rpc_tamed.rpc_id(p, uid, peer)
 		_rpc_tamed(uid, peer)
 		_add_xp(peer, 25)
+
+
+func notify_status(a: Animal) -> void:
+	for peer in _ready_peers:
+		_rpc_status.rpc_id(peer, a.uid, a.pregnant_until >= 0.0, a.tame_progress)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_status(uid: int, pregnant: bool, tame_progress: float) -> void:
+	var a: Animal = animals.get(uid)
+	if a != null:
+		a.pregnant_until = 1.0 if pregnant else -1.0
+		a.tame_progress = tame_progress
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -232,6 +247,8 @@ func _spawn(sp: SpeciesData, genes: PackedFloat32Array, female: bool, pos: Vecto
 
 
 func give_birth(mother: Animal) -> void:
+	mother.pregnant_until = -1.0
+	notify_status(mother)
 	if animals.size() >= POP_CAP:
 		return
 	var n := _rng.randi_range(mother.species.litter.x, mother.species.litter.y)
@@ -268,9 +285,16 @@ func _give_drops(a: Animal, peer: int) -> void:
 			inv.add(peer, StringName(item_id), n)
 
 
+func _weapon_damage(peer: int) -> float:
+	var inv := get_node_or_null("/root/Inventory")
+	if inv != null and inv.has_method("weapon_damage"):
+		return clampf(inv.weapon_damage(peer), 1.0, 40.0)
+	return 4.0
+
+
 ## Cliente -> servidor: jogador bateu num animal.
 @rpc("any_peer", "call_local", "reliable")
-func request_hit(uid: int, damage: float) -> void:
+func request_hit(uid: int, _client_damage: float) -> void:
 	if not multiplayer.is_server():
 		return
 	var a: Animal = animals.get(uid)
@@ -279,7 +303,15 @@ func request_hit(uid: int, damage: float) -> void:
 	var peer := multiplayer.get_remote_sender_id()
 	if peer == 0:
 		peer = 1
-	a.health -= clampf(damage, 0.0, 30.0)
+	# O cliente não escolhe o dano: o servidor valida alcance e cadência.
+	var now := Time.get_ticks_msec() / 1000.0
+	if now - _last_hit.get(peer, -10.0) < 0.35:
+		return
+	var pl := player_of(peer)
+	if pl == null or pl.global_position.distance_to(a.position) > 5.5 * maxf(1.0, a.scale_now * 0.5):
+		return
+	_last_hit[peer] = now
+	a.health -= _weapon_damage(peer)
 	a.state = Animal.State.FLEE
 	if a.health <= 0.0:
 		kill_animal(uid, peer)
@@ -391,3 +423,5 @@ func send_full_state(peer: int) -> void:
 		_rpc_spawn.rpc_id(peer, a.uid, a.species.id, a.genes, a.female, a.position, a.age_days)
 		if a.tamed_by != 0:
 			_rpc_tamed.rpc_id(peer, a.uid, a.tamed_by)
+		if a.pregnant_until >= 0.0 or a.tame_progress > 0.0:
+			_rpc_status.rpc_id(peer, a.uid, a.pregnant_until >= 0.0, a.tame_progress)

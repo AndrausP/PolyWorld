@@ -25,6 +25,7 @@ var tame_progress := 0.0         ## 0..100; ao chegar em 100 vira domado
 var _model: Node3D
 var _target := Vector3.ZERO
 var _timer := 0.0
+var _attack_cd := 0.0
 var _walk_phase := 0.0
 var _moving := false
 # Puppet (cliente)
@@ -104,6 +105,7 @@ func server_tick(delta: float, mgr: Node) -> void:
 	elif hunger > max_hunger * 0.6 and health < max_health:
 		health = minf(max_health, health + delta * 0.3)
 	_timer -= delta
+	_attack_cd -= delta
 
 	var threat: Node3D = mgr.nearest_threat(self)
 	if threat != null:
@@ -116,7 +118,8 @@ func server_tick(delta: float, mgr: Node) -> void:
 			state = State.HUNT
 			_target = prey.global_position
 			_timer = 1.0
-			if position.distance_to(prey.global_position) < 1.6 * scale_now:
+			if position.distance_to(prey.global_position) < 1.6 * scale_now and _attack_cd <= 0.0:
+				_attack_cd = 1.4
 				mgr.attack(self, prey)
 
 	if tamed_by != 0 and threat == null and state != State.HUNT:
@@ -208,3 +211,4 @@ func _try_reproduce(now: float, mgr: Node) -> void:
 	if mate != null:
 		pregnant_until = now + species.gestation_days * WorldClock.DAY_SECONDS * 0.25
 		father_genes = mate.genes
+		mgr.notify_status(self)

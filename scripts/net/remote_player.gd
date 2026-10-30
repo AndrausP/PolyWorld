@@ -5,6 +5,8 @@ extends Node3D
 
 var peer := 0
 var _target_pos := Vector3.ZERO
+var last_update := 0.0
+var has_state := false
 var _target_yaw := 0.0
 var _label: Label3D
 var _head: Node3D
@@ -61,6 +63,10 @@ func _limb(pivot_pos: Vector3, h: float, w: float, mat: Material) -> Node3D:
 	add_child(pivot)
 	_box(Vector3(w, h, w), Vector3(0, -h * 0.5, 0), mat, pivot)
 	return pivot
+
+
+func get_target() -> Vector3:
+	return _target_pos
 
 
 func set_state(pos: Vector3, yaw: float, pitch: float) -> void:
