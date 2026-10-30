@@ -274,6 +274,15 @@ func _debug_screenshot() -> void:
 					_player.teleport_to(Vector3(spot.x, _fauna.ground_height(spot) + 0.5, spot.z))
 					_player.rotation.y = atan2(-(a.position.x - spot.x), -(a.position.z - spot.z))
 					break
+		elif arg == "--coast":
+			var sea := _island.config.sea_level
+			var dir := Vector2.from_angle(float(_island.seed_value % 628) / 100.0)
+			var r := 0.0
+			while r < 900.0 and _fauna.ground_height(Vector3(dir.x * r, 0, dir.y * r)) > sea + 0.4:
+				r += 4.0
+			var p := Vector3(dir.x * (r - 8.0), 0, dir.y * (r - 8.0))
+			_player.teleport_to(Vector3(p.x, _fauna.ground_height(p) + 1.0, p.z))
+			_player.rotation.y = atan2(dir.x, dir.y) + PI
 		elif arg.begins_with("--time="):
 			WorldClock.elapsed = floorf(WorldClock.elapsed / WorldClock.DAY_SECONDS) * WorldClock.DAY_SECONDS + arg.get_slice("=", 1).to_float() * WorldClock.DAY_SECONDS
 	if OS.get_cmdline_user_args().has("--selftest"):
