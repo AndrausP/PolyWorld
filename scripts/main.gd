@@ -271,6 +271,9 @@ func _debug_screenshot() -> void:
 	if OS.get_cmdline_user_args().has("--selftest"):
 		await _selftest()
 		return
+	if OS.get_cmdline_user_args().has("--selftest-net"):
+		await _selftest_net()
+		return
 	if path.is_empty():
 		return
 	WorldClock.time_scale = 0.0
@@ -352,4 +355,38 @@ func _selftest() -> void:
 	WorldClock.elapsed = (3.0 * WorldClock.DAYS_PER_SEASON + 1.0) * WorldClock.DAY_SECONDS
 	print("[selftest] inverno sem fruta: %s" % [not _flora.has_fruit(fruit_idx)])
 	print("[selftest] RESULTADO: %s" % ("PASSOU" if ok else "FALHOU"))
+	get_tree().quit()
+
+
+## Cliente remoto (--join + --selftest-net): caça, colheita e domesticação via RPC.
+func _selftest_net() -> void:
+	var peer := Net.local_peer()
+	var inv := get_node("/root/Inventory")
+	await get_tree().create_timer(4.0).timeout
+	print("[nettest] peer=%d, animais sincronizados=%d, jogadores remotos=%d" % [peer, _fauna.animals.size(), _remote.size()])
+	var target: Animal
+	for a: Animal in _fauna.animals.values():
+		if a.species.id == &"deer":
+			target = a
+			break
+	var target_uid := target.uid
+	var m0: int = inv.count(peer, &"raw_meat")
+	_fauna.request_hit.rpc_id(1, target_uid, 999.0)
+	await get_tree().create_timer(2.0).timeout
+	print("[nettest] caça remota: carne +%d %s | animal removido no cliente: %s" % [inv.count(peer, &"raw_meat") - m0, "OK" if inv.count(peer, &"raw_meat") > m0 else "FALHOU", not _fauna.animals.has(target_uid)])
+	var wood_idx := -1
+	for i in _island.harvestables.size():
+		if (_island.harvestables[i][1] as VegetationEntry).harvest_item == &"wood_log":
+			wood_idx = i
+			break
+	var pos: Vector3 = _island.harvestables[wood_idx][0]
+	_player.teleport_to(pos + Vector3(2, 1, 0))
+	await get_tree().create_timer(1.0).timeout   # o servidor recebe a posição pelo Net
+	var origin := _player.global_position + Vector3.UP * 1.6
+	var dir := ((pos + Vector3.UP * 0.8) - origin).normalized()
+	var w0: int = inv.count(peer, &"wood_log")
+	for k in 6:
+		_flora.request_action(origin, dir, false)
+	await get_tree().create_timer(1.5).timeout
+	print("[nettest] lenha remota: +%d %s" % [inv.count(peer, &"wood_log") - w0, "OK" if inv.count(peer, &"wood_log") > w0 else "FALHOU"])
 	get_tree().quit()
