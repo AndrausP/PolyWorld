@@ -7,6 +7,7 @@ extends CharacterBody3D
 signal health_changed(current: float, maximum: float)
 signal hunger_changed(current: float, maximum: float)
 signal movement_mode_changed(flying: bool, noclip: bool)
+signal hit_animal(uid: int, damage: float)
 
 const DOUBLE_TAP_MS := 300
 
@@ -57,10 +58,46 @@ var _last_jump_ms := -1000
 
 
 func _ready() -> void:
+	add_to_group("players")
+	add_to_group("local_player")
 	health = max_health
 	hunger = max_hunger
 	_capture_mouse(true)
 	DevMode.changed.connect(_on_dev_mode_changed)
+
+
+## Dano vindo de animais ou outros perigos.
+func take_damage(amount: float) -> void:
+	if DevMode.enabled:
+		return
+	health -= amount
+	if health <= 0.0:
+		_respawn()
+
+
+func _respawn() -> void:
+	health = max_health
+	hunger = max_hunger
+	var spawn := get_tree().get_first_node_in_group("spawn_provider")
+	teleport_to(spawn.find_spawn_point() + Vector3.UP * 0.5 if spawn != null else Vector3(0, 30, 0))
+
+
+## Golpe: raio da câmera contra a camada de animais (camada 4).
+func attack(damage := 4.0) -> void:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var from := cam.global_position
+	var to := from - cam.global_transform.basis.z * 3.2
+	var q := PhysicsRayQueryParameters3D.create(from, to, 1 << 3)
+	q.collide_with_areas = true
+	q.collide_with_bodies = false
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if hit.is_empty():
+		return
+	var area := hit.collider as Node
+	if area != null and area.has_meta("animal_uid"):
+		hit_animal.emit(area.get_meta("animal_uid"), damage)
 
 
 func set_health(value: float) -> void:
@@ -125,6 +162,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_capture_mouse(false)
 	elif event is InputEventMouseButton and event.pressed and not captured:
 		_capture_mouse(true)
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and captured:
+		attack()
 	elif event is InputEventMouseMotion and captured:
 		_look(event.relative)
 	elif DevMode.enabled and event.is_action_pressed("jump") and not event.is_echo():
