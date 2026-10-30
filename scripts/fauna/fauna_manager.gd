@@ -116,6 +116,70 @@ func attack(a: Animal, target: Node3D) -> void:
 		target.take_damage(a.species.damage * a.genes[Genes.G.AGGRESSION])
 
 
+func player_of(peer: int) -> Node3D:
+	for p: Node3D in _players():
+		if p is RemotePlayer and (p as RemotePlayer).peer == peer:
+			return p
+		if p is Player and peer == multiplayer.get_unique_id():
+			return p
+	return null
+
+
+## Comidas aceitas para domesticar, por dieta.
+const TAME_FOOD := {
+	SpeciesData.Diet.HERBIVORE: [&"berries", &"apple", &"carrot", &"seeds"],
+	SpeciesData.Diet.OMNIVORE: [&"berries", &"apple", &"cooked_meat", &"seeds"],
+	SpeciesData.Diet.CARNIVORE: [&"cooked_meat", &"raw_meat", &"dried_meat"],
+}
+
+
+## Jogador alimenta um animal manso o bastante: 3 a 4 oferendas o domam.
+@rpc("any_peer", "call_local", "reliable")
+func request_tame(uid: int) -> void:
+	if not multiplayer.is_server():
+		return
+	var peer := multiplayer.get_remote_sender_id()
+	if peer == 0:
+		peer = 1
+	var a: Animal = animals.get(uid)
+	var pl := player_of(peer)
+	if a == null or pl == null or not a.species.tameable or a.tamed_by != 0:
+		return
+	if pl.global_position.distance_to(a.position) > 4.5:
+		return
+	var inv := get_node_or_null("/root/Inventory")
+	if inv != null:
+		var paid := false
+		for item: StringName in TAME_FOOD[a.species.diet]:
+			if inv.remove(peer, item, 1):
+				paid = true
+				break
+		if not paid:
+			return
+	a.tame_progress += 100.0 / (3.0 + a.genes[Genes.G.AGGRESSION] * 2.0)
+	a.hunger = minf(a.max_hunger, a.hunger + 25.0)
+	if a.tame_progress >= 100.0:
+		a.tamed_by = peer
+		a.state = Animal.State.IDLE
+		for p in _ready_peers:
+			_rpc_tamed.rpc_id(p, uid, peer)
+		_rpc_tamed(uid, peer)
+		_add_xp(peer, 25)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_tamed(uid: int, peer: int) -> void:
+	var a: Animal = animals.get(uid)
+	if a != null:
+		a.tamed_by = peer
+
+
+func _add_xp(peer: int, amount: int) -> void:
+	var prog := get_node_or_null("/root/Progression")
+	if prog != null:
+		prog.add_xp(peer, amount)
+
+
 func find_mate(a: Animal) -> Animal:
 	for other: Animal in animals.values():
 		if other != a and not other.female and other.is_adult and other.species.id == a.species.id \
@@ -325,3 +389,5 @@ func _rpc_despawn(uid: int) -> void:
 func send_full_state(peer: int) -> void:
 	for a: Animal in animals.values():
 		_rpc_spawn.rpc_id(peer, a.uid, a.species.id, a.genes, a.female, a.position, a.age_days)
+		if a.tamed_by != 0:
+			_rpc_tamed.rpc_id(peer, a.uid, a.tamed_by)

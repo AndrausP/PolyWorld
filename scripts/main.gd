@@ -147,6 +147,10 @@ func _on_island_generated(_seed_value: int) -> void:
 		_player.interact.connect(func(o: Vector3, d: Vector3) -> void: _flora.request_action(o, d, true))
 		_hud.setup(_player, _island)
 		_hud.show()
+		var world_hud := WorldHud.new()
+		world_hud.player = _player
+		world_hud.fauna = _fauna
+		add_child(world_hud)
 	else:
 		_player.queue_free()
 		_hud.queue_free()

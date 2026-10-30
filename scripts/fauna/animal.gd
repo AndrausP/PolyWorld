@@ -3,7 +3,7 @@ extends Node3D
 ## Um animal. O servidor roda a IA (server_tick); clientes só interpolam
 ## posição/rotação recebidas (puppet). Visual vem de AnimalModel.
 
-enum State { IDLE, WANDER, GRAZE, FLEE, HUNT, SLEEP }
+enum State { IDLE, WANDER, GRAZE, FLEE, HUNT, SLEEP, FOLLOW }
 
 const FOOD_BY_SEASON := [1.0, 1.0, 0.8, 0.35]  ## quanto pasto há por estação
 
@@ -20,6 +20,7 @@ var state: State = State.IDLE
 var pregnant_until := -1.0       ## WorldClock.elapsed do parto
 var father_genes := PackedFloat32Array()
 var tamed_by := 0                ## peer dono (0 = selvagem)
+var tame_progress := 0.0         ## 0..100; ao chegar em 100 vira domado
 
 var _model: Node3D
 var _target := Vector3.ZERO
@@ -118,6 +119,13 @@ func server_tick(delta: float, mgr: Node) -> void:
 			if position.distance_to(prey.global_position) < 1.6 * scale_now:
 				mgr.attack(self, prey)
 
+	if tamed_by != 0 and threat == null and state != State.HUNT:
+		var owner_node: Node3D = mgr.player_of(tamed_by)
+		if owner_node != null and position.distance_to(owner_node.global_position) > 7.0:
+			state = State.FOLLOW
+			_target = owner_node.global_position
+			_timer = 1.0
+
 	if _timer <= 0.0:
 		_choose_state(mgr)
 
@@ -125,6 +133,7 @@ func server_tick(delta: float, mgr: Node) -> void:
 	match state:
 		State.WANDER: speed = species.base_speed * 0.35
 		State.FLEE, State.HUNT: speed = species.base_speed * genes[Genes.G.SPEED]
+		State.FOLLOW: speed = species.base_speed * 0.8 * genes[Genes.G.SPEED]
 		State.GRAZE:
 			var food: float = FOOD_BY_SEASON[WorldClock.season]
 			hunger = minf(max_hunger, hunger + delta * 3.0 * food)
