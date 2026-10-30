@@ -1,0 +1,15 @@
+﻿[gd_resource type="Resource" script_class="StructureData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/structures/structure_data.gd" id="1_structure"]
+
+[resource]
+script = ExtResource("1_structure")
+id = &"wall"
+display_name = "Parede"
+description = "Parede modular de madeira."
+size = Vector3(2.0,2.0,0.2)
+color = Color(0.55,0.38,0.24,1)
+costs = {"wood_log": 4, "stick": 2}
+tier = 0
+station = &""
+xp = 8

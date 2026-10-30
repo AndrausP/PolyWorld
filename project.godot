@@ -12,6 +12,10 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 [autoload]
 
 DevMode="*res://scripts/dev/dev_mode.gd"
+Inventory="*res://scripts/inventory/inventory.gd"
+Progression="*res://scripts/progression/progression.gd"
+Crafting="*res://scripts/crafting/crafting.gd"
+Building="*res://scripts/building/building.gd"
 WorldClock="*res://scripts/sim/world_clock.gd"
 Net="*res://scripts/net/net.gd"
 

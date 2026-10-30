@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"recover_seeds"
+display_name = "Guardar sementes"
+description = "Separa sementes de uma cenoura madura."
+inputs = {"carrot": 1}
+outputs = {"seeds": 2}
+station = &""
+tier = 0
+xp = 8
+unlock_level = 1
+unlock_cost = 0
+prerequisites = []

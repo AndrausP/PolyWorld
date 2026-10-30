@@ -1,0 +1,15 @@
+﻿[gd_resource type="Resource" script_class="StructureData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/structures/structure_data.gd" id="1_structure"]
+
+[resource]
+script = ExtResource("1_structure")
+id = &"roof"
+display_name = "Teto"
+description = "Cobertura modular de madeira e palha."
+size = Vector3(2.0,0.2,2.0)
+color = Color(0.68,0.55,0.31,1)
+costs = {"plank": 3, "thatch": 5}
+tier = 0
+station = &""
+xp = 8

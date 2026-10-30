@@ -1,0 +1,16 @@
+﻿[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/items/item_definition.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"feather"
+display_name = "Pena"
+description = "Pena leve de ave."
+icon_color = Color(0.88,0.86,0.78,1)
+max_stack = 64
+tier = 0
+category = &"material"
+food_value = 0
+tool_type = &""
+durability = 0

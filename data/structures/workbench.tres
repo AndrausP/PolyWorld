@@ -1,0 +1,15 @@
+﻿[gd_resource type="Resource" script_class="StructureData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/structures/structure_data.gd" id="1_structure"]
+
+[resource]
+script = ExtResource("1_structure")
+id = &"workbench"
+display_name = "Bancada"
+description = "Estação para receitas avançadas."
+size = Vector3(2.0,1.0,1.0)
+color = Color(0.46,0.29,0.16,1)
+costs = {"wood_log": 8, "plank": 4, "stone": 2}
+tier = 0
+station = &"workbench"
+xp = 10

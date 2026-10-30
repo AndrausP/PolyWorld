@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"chest_kit_recipe"
+display_name = "Kit de baú"
+description = "Monta um baú para guardar itens."
+inputs = {"plank": 6, "iron_ingot": 1}
+outputs = {"chest_kit": 1}
+station = &"workbench"
+tier = 1
+xp = 22
+unlock_level = 3
+unlock_cost = 1
+prerequisites = [&"make_plank"]

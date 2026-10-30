@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"wall_kit_recipe"
+display_name = "Kit de parede"
+description = "Monta uma parede de madeira."
+inputs = {"plank": 4, "stick": 3}
+outputs = {"wall_kit": 1}
+station = &""
+tier = 0
+xp = 16
+unlock_level = 1
+unlock_cost = 0
+prerequisites = []

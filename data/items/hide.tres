@@ -1,0 +1,16 @@
+﻿[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/items/item_definition.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"hide"
+display_name = "Pele"
+description = "Pele crua obtida de animais."
+icon_color = Color(0.48,0.29,0.17,1)
+max_stack = 32
+tier = 0
+category = &"material"
+food_value = 0
+tool_type = &""
+durability = 0

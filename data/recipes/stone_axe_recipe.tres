@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"stone_axe_recipe"
+display_name = "Machado de pedra"
+description = "Prende uma lâmina de pedra ao cabo."
+inputs = {"stone": 4, "stick": 2, "rope": 1}
+outputs = {"stone_axe": 1}
+station = &""
+tier = 2
+xp = 25
+unlock_level = 5
+unlock_cost = 1
+prerequisites = [&"wood_axe_recipe"]

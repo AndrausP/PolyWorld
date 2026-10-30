@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"make_plank"
+display_name = "Cortar tábuas"
+description = "Transforma toras em tábuas."
+inputs = {"wood_log": 1}
+outputs = {"plank": 4}
+station = &""
+tier = 0
+xp = 12
+unlock_level = 1
+unlock_cost = 0
+prerequisites = []

@@ -1,0 +1,16 @@
+﻿[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/items/item_definition.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"wall_kit"
+display_name = "Kit de parede"
+description = "Peça modular de parede de madeira."
+icon_color = Color(0.58,0.39,0.23,1)
+max_stack = 1
+tier = 0
+category = &"structure"
+food_value = 0
+tool_type = &""
+durability = 0

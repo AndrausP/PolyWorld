@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"compost_bone"
+display_name = "Composto de ossos"
+description = "Tritura ossos para enriquecer o solo."
+inputs = {"bone": 2, "berries": 1}
+outputs = {"fertilizer": 2}
+station = &""
+tier = 0
+xp = 12
+unlock_level = 1
+unlock_cost = 0
+prerequisites = []

@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"window_kit_recipe"
+display_name = "Kit de janela"
+description = "Monta um painel com abertura."
+inputs = {"plank": 4, "fiber": 2}
+outputs = {"window_kit": 1}
+station = &""
+tier = 1
+xp = 18
+unlock_level = 2
+unlock_cost = 0
+prerequisites = []

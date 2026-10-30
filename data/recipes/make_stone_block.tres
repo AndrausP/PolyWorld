@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"make_stone_block"
+display_name = "Talhar pedra"
+description = "Talha pedras para construção."
+inputs = {"stone": 4}
+outputs = {"stone_block": 1}
+station = &""
+tier = 1
+xp = 18
+unlock_level = 2
+unlock_cost = 0
+prerequisites = []

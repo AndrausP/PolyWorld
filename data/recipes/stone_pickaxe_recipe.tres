@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"stone_pickaxe_recipe"
+display_name = "Picareta de pedra"
+description = "Monta uma picareta para mineração."
+inputs = {"stone": 5, "stick": 2, "rope": 1}
+outputs = {"stone_pickaxe": 1}
+station = &""
+tier = 2
+xp = 25
+unlock_level = 5
+unlock_cost = 1
+prerequisites = [&"wood_pickaxe_recipe"]

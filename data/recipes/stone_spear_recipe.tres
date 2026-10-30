@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"stone_spear_recipe"
+display_name = "Lança de pedra"
+description = "Reforça uma lança com pedra talhada."
+inputs = {"stone": 2, "stick": 3, "rope": 1}
+outputs = {"stone_spear": 1}
+station = &""
+tier = 2
+xp = 25
+unlock_level = 5
+unlock_cost = 1
+prerequisites = [&"wood_spear_recipe"]

@@ -1,0 +1,15 @@
+﻿[gd_resource type="Resource" script_class="StructureData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/structures/structure_data.gd" id="1_structure"]
+
+[resource]
+script = ExtResource("1_structure")
+id = &"stairs"
+display_name = "Escada"
+description = "Degraus para subir entre níveis."
+size = Vector3(2.0,1.0,2.0)
+color = Color(0.55,0.37,0.22,1)
+costs = {"plank": 5, "stick": 3}
+tier = 1
+station = &""
+xp = 10

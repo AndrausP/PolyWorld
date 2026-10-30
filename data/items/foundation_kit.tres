@@ -1,0 +1,16 @@
+﻿[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/items/item_definition.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"foundation_kit"
+display_name = "Kit de fundação"
+description = "Peça modular para iniciar uma base."
+icon_color = Color(0.58,0.43,0.29,1)
+max_stack = 1
+tier = 0
+category = &"structure"
+food_value = 0
+tool_type = &""
+durability = 0

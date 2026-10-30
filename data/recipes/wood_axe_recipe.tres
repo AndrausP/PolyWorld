@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"wood_axe_recipe"
+display_name = "Machado de madeira"
+description = "Monta um machado simples."
+inputs = {"plank": 3, "stick": 2, "stone": 1}
+outputs = {"wood_axe": 1}
+station = &""
+tier = 1
+xp = 20
+unlock_level = 3
+unlock_cost = 1
+prerequisites = [&"make_plank"]

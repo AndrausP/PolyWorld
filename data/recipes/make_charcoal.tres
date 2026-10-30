@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"make_charcoal"
+display_name = "Queimar carvão vegetal"
+description = "Queima madeira lentamente para obter combustível."
+inputs = {"wood_log": 2}
+outputs = {"charcoal": 2}
+station = &"campfire"
+tier = 1
+xp = 18
+unlock_level = 2
+unlock_cost = 0
+prerequisites = []

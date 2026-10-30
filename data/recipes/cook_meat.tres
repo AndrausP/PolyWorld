@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"cook_meat"
+display_name = "Assar carne"
+description = "Cozinha carne crua na fogueira."
+inputs = {"raw_meat": 1}
+outputs = {"cooked_meat": 1}
+station = &"campfire"
+tier = 0
+xp = 12
+unlock_level = 1
+unlock_cost = 0
+prerequisites = []

@@ -1,0 +1,17 @@
+﻿[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/recipes/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"cook_meat_batch"
+display_name = "Assar lote de carne"
+description = "Cozinha várias porções de uma vez."
+inputs = {"raw_meat": 4}
+outputs = {"cooked_meat": 4}
+station = &"campfire"
+tier = 0
+xp = 18
+unlock_level = 1
+unlock_cost = 0
+prerequisites = [&"cook_meat"]

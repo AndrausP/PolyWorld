@@ -1,0 +1,15 @@
+﻿[gd_resource type="Resource" script_class="StructureData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/structures/structure_data.gd" id="1_structure"]
+
+[resource]
+script = ExtResource("1_structure")
+id = &"door"
+display_name = "Porta"
+description = "Porta simples para uma parede."
+size = Vector3(1.0,2.0,0.2)
+color = Color(0.42,0.27,0.16,1)
+costs = {"plank": 4, "rope": 1}
+tier = 0
+station = &""
+xp = 8

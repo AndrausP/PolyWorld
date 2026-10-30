@@ -1,0 +1,16 @@
+﻿[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/items/item_definition.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"cooked_egg"
+display_name = "Ovo cozido"
+description = "Ovo preparado na fogueira."
+icon_color = Color(0.92,0.78,0.35,1)
+max_stack = 20
+tier = 0
+category = &"food"
+food_value = 20
+tool_type = &""
+durability = 0

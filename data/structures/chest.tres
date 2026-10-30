@@ -1,0 +1,15 @@
+﻿[gd_resource type="Resource" script_class="StructureData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/structures/structure_data.gd" id="1_structure"]
+
+[resource]
+script = ExtResource("1_structure")
+id = &"chest"
+display_name = "Baú"
+description = "Armazenamento modular protegido."
+size = Vector3(1.0,1.0,1.0)
+color = Color(0.39,0.24,0.13,1)
+costs = {"plank": 6, "iron_ingot": 1}
+tier = 1
+station = &""
+xp = 10
