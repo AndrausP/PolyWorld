@@ -198,7 +198,7 @@ func _refresh_fruit() -> void:
 			var ang := r.randf() * TAU
 			var rad: float = r.randf_range(0.5, 1.5) * float(item[2]) * (0.4 if entry.fruit_height < 1.5 else 1.0)
 			var h: float = entry.fruit_height * float(item[2]) * r.randf_range(0.8, 1.15)
-			xforms.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.16), p + Vector3(cos(ang) * rad, h, sin(ang) * rad)))
+			xforms.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.26), p + Vector3(cos(ang) * rad, h, sin(ang) * rad)))
 			colors.append(entry.fruit_color)
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
@@ -206,8 +206,8 @@ func _refresh_fruit() -> void:
 	var sphere := SphereMesh.new()
 	sphere.radius = 0.5
 	sphere.height = 1.0
-	sphere.radial_segments = 6
-	sphere.rings = 3
+	sphere.radial_segments = 8
+	sphere.rings = 4
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
 	mat.roughness = 0.6
