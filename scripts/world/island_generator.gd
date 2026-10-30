@@ -19,6 +19,8 @@ var biome_map: BiomeMap
 
 var _library: VegetationLibrary
 var _placer: VegetationPlacer
+## Plantas coletáveis [posição, VegetationEntry, escala]; preenchido ao gerar.
+var harvestables: Array = []
 var _terrain_arrays: Array = []
 var _water_arrays: Array = []
 var _thread: Thread
@@ -123,6 +125,7 @@ func _apply() -> void:
 	_water.place_at(config.sea_level)
 	# Fundo do mar infinito na profundidade da borda da ilha (esconde a borda da malha).
 	_seabed.position.y = config.sea_level - config.sea_threshold * config.max_height - 0.05
+	harvestables = _placer.harvestables
 	_vegetation.build(_placer, _library)
 	_terrain_arrays.clear()
 	_water_arrays.clear()

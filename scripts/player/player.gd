@@ -8,6 +8,9 @@ signal health_changed(current: float, maximum: float)
 signal hunger_changed(current: float, maximum: float)
 signal movement_mode_changed(flying: bool, noclip: bool)
 signal hit_animal(uid: int, damage: float)
+## Golpe que não acertou animal (árvore/pedra) e tecla F (colher).
+signal swing(origin: Vector3, direction: Vector3)
+signal interact(origin: Vector3, direction: Vector3)
 
 const DOUBLE_TAP_MS := 300
 
@@ -94,6 +97,7 @@ func attack(damage := 4.0) -> void:
 	q.collide_with_bodies = false
 	var hit := get_world_3d().direct_space_state.intersect_ray(q)
 	if hit.is_empty():
+		swing.emit(from, -cam.global_transform.basis.z)
 		return
 	var area := hit.collider as Node
 	if area != null and area.has_meta("animal_uid"):
@@ -166,6 +170,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		attack()
 	elif event is InputEventMouseMotion and captured:
 		_look(event.relative)
+	elif event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_F and captured:
+		var cam := get_viewport().get_camera_3d()
+		if cam != null:
+			interact.emit(cam.global_position, -cam.global_transform.basis.z)
 	elif DevMode.enabled and event.is_action_pressed("jump") and not event.is_echo():
 		_check_double_tap_jump()
 	elif DevMode.enabled and event.is_action_pressed("toggle_noclip"):

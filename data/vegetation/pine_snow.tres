@@ -23,3 +23,6 @@ view_distance = 380.0
 wind_strength = 0.25
 leaf_tint = Color(0.45, 0.62, 0.55, 1)
 snow_cover = 0.75
+harvest_item = &"wood_log"
+harvest_amount = Vector2i(2, 4)
+harvest_hits = 5

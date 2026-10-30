@@ -11,6 +11,7 @@ extends Node3D
 @onready var _env: WorldEnvironment = $WorldEnvironment
 
 var _fauna: FaunaManager
+var _flora: FloraManager
 var _remote: Dictionary = {}          ## peer -> RemotePlayer
 var _menu: MainMenu
 var _join_address := ""
@@ -133,11 +134,17 @@ func _on_island_generated(_seed_value: int) -> void:
 	_fauna.name = "Fauna"
 	add_child(_fauna)
 	_fauna.setup(_island, _players, Net.is_server())
+	_flora = FloraManager.new()
+	_flora.name = "Flora"
+	add_child(_flora)
+	_flora.setup(_island, _player_pos_of, _focus_point)
 	if not dedicated:
 		_player.water_level_at = _island.get_water_level_at
 		_player.spawn_at(_island.find_spawn_point(), Vector3.ZERO)
 		_player.process_mode = Node.PROCESS_MODE_INHERIT
 		_player.hit_animal.connect(_on_player_hit_animal)
+		_player.swing.connect(func(o: Vector3, d: Vector3) -> void: _flora.request_action(o, d, false))
+		_player.interact.connect(func(o: Vector3, d: Vector3) -> void: _flora.request_action(o, d, true))
 		_hud.setup(_player, _island)
 		_hud.show()
 	else:
@@ -149,6 +156,7 @@ func _on_island_generated(_seed_value: int) -> void:
 	for i in 20:
 		await get_tree().process_frame
 	_loading.finish()
+	_debug_screenshot()
 	if Net.mode == Net.Mode.HOST:
 		print("[PolyWorld] hospedando — seed %d" % _island.seed_value)
 
@@ -159,6 +167,21 @@ func _players() -> Array:
 		out.append(_player)
 	out.append_array(_remote.values())
 	return out
+
+
+## Posição do jogador de um peer (servidor valida colheita com isto).
+func _player_pos_of(peer: int) -> Vector3:
+	if peer == Net.local_peer() and is_instance_valid(_player) and Net.mode != Net.Mode.DEDICATED:
+		return _player.global_position
+	if _remote.has(peer):
+		return _remote[peer].global_position
+	return Vector3.INF
+
+
+func _focus_point() -> Vector3:
+	if Net.mode != Net.Mode.DEDICATED and is_instance_valid(_player):
+		return _player.global_position
+	return Vector3.INF
 
 
 func _on_player_hit_animal(uid: int, damage: float) -> void:
@@ -192,6 +215,7 @@ func _on_peer_left(peer: int) -> void:
 func _on_peer_ready(peer: int) -> void:
 	if _fauna != null and Net.is_server():
 		_fauna.mark_peer_ready(peer)
+		_flora.send_state(peer)
 
 
 func _ensure_remote(peer: int) -> RemotePlayer:
@@ -219,3 +243,31 @@ func _resolve_seed() -> int:
 	if seed_value == 0:
 		seed_value = randi()
 	return seed_value
+
+
+## Depuração: --shot=arquivo.png [--season=0..3.9 --time=0..1] salva uma captura e sai.
+func _debug_screenshot() -> void:
+	var path := ""
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--shot="):
+			path = arg.get_slice("=", 1)
+		elif arg.begins_with("--season="):
+			var v := arg.get_slice("=", 1).to_float()
+			WorldClock.elapsed = (floorf(v) * WorldClock.DAYS_PER_SEASON + fmod(v, 1.0) * WorldClock.DAYS_PER_SEASON) * WorldClock.DAY_SECONDS + WorldClock.DAY_SECONDS * 0.5
+		elif arg.begins_with("--animal="):
+			var sp_id := StringName(arg.get_slice("=", 1))
+			for a: Animal in _fauna.animals.values():
+				if a.species.id == sp_id:
+					var spot := a.position + Vector3(3.0, 0.0, 3.0)
+					_player.teleport_to(Vector3(spot.x, _fauna.ground_height(spot) + 0.5, spot.z))
+					_player.rotation.y = atan2(-(a.position.x - spot.x), -(a.position.z - spot.z))
+					break
+		elif arg.begins_with("--time="):
+			WorldClock.elapsed = floorf(WorldClock.elapsed / WorldClock.DAY_SECONDS) * WorldClock.DAY_SECONDS + arg.get_slice("=", 1).to_float() * WorldClock.DAY_SECONDS
+	if path.is_empty():
+		return
+	WorldClock.time_scale = 0.0
+	for i in 90:
+		await get_tree().process_frame
+	get_viewport().get_texture().get_image().save_png(path)
+	get_tree().quit()

@@ -21,3 +21,6 @@ wind_strength = 0.0
 collision_radius = 1.1
 collision_is_sphere = true
 snow_cover = 0.7
+harvest_item = &"stone"
+harvest_amount = Vector2i(2, 4)
+harvest_hits = 5

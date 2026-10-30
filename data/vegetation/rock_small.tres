@@ -20,3 +20,6 @@ view_distance = 200.0
 wind_strength = 0.0
 collision_radius = 1.1
 collision_is_sphere = true
+harvest_item = &"stone"
+harvest_amount = Vector2i(1, 2)
+harvest_hits = 3

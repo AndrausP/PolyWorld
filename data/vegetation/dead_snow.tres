@@ -22,3 +22,6 @@ collision_height = 4.0
 view_distance = 380.0
 wind_strength = 0.06
 snow_cover = 0.6
+harvest_item = &"stick"
+harvest_amount = Vector2i(2, 5)
+harvest_hits = 2

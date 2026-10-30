@@ -87,6 +87,8 @@ func _make_material(entry: VegetationEntry, source: Material, height: float, fol
 	material.set_shader_parameter("mesh_height", height)
 	material.set_shader_parameter("wind_weight", entry.wind_strength)
 	material.set_shader_parameter("snow_amount", entry.snow_cover)
+	if is_foliage and name.begins_with("Leaves") and not name.contains("Pine"):
+		material.set_shader_parameter("seasonal", 1.0)
 	if is_foliage:
 		material.set_shader_parameter("flutter", 0.3 if name == "Grass" else 1.0)
 		if name == "Grass":

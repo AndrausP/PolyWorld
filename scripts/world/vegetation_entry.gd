@@ -37,6 +37,20 @@ enum Layer { LARGE, GROUND }
 ## Deslocamento (m) do topo do modelo com vento de força 1.
 @export var wind_strength: float = 0.3
 
+@export_group("Coleta")
+## Item que se obtém golpeando (lenha, pedra...). Vazio = não coletável.
+@export var harvest_item: StringName = &""
+@export var harvest_amount := Vector2i(1, 3)
+@export var harvest_hits := 3
+## Fruto sazonal (F para colher). fruit_chance = fração das plantas que dão fruto.
+@export var fruit_item: StringName = &""
+@export_range(0.0, 1.0) var fruit_chance := 0.0
+@export var fruit_amount := Vector2i(1, 3)
+## Estações com fruto (0 primavera, 1 verão, 2 outono, 3 inverno).
+@export var fruit_seasons: PackedInt32Array = []
+@export var fruit_color := Color(0.85, 0.15, 0.1)
+@export var fruit_height := 2.6
+
 @export_group("Colisão")
 ## 0 = sem colisão. Raio em metros (multiplicado pela escala nas pedras).
 @export var collision_radius: float = 0.0

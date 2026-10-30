@@ -21,3 +21,6 @@ collision_radius = 0.6
 collision_height = 4.0
 view_distance = 380.0
 wind_strength = 0.4
+harvest_item = &"wood_log"
+harvest_amount = Vector2i(2, 3)
+harvest_hits = 4

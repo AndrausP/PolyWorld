@@ -17,6 +17,8 @@ class Group:
 var groups: Array = []
 ## Colisões: Array de [posição: Vector3, entrada: VegetationEntry, escala: float].
 var colliders: Array = []
+## Plantas coletáveis (árvores, arbustos, pedras): [posição, entrada, escala].
+var harvestables: Array = []
 
 var _lookup := {}
 
@@ -70,6 +72,8 @@ func _place_layer(layer: int, step: float, chunk_size: float, height_map: Height
 			_add_instance(chosen, variant, pos, basis, chunk_size, origin)
 			if entry.collision_radius > 0.0:
 				colliders.append([pos, entry, s])
+			if layer == VegetationEntry.Layer.LARGE and (entry.harvest_item != &"" or entry.fruit_item != &""):
+				harvestables.append([pos, entry, s])
 
 
 func _add_instance(entry_id: int, variant: int, pos: Vector3, basis: Basis, chunk_size: float, origin: float) -> void:
